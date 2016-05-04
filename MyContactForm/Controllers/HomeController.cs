@@ -36,11 +36,7 @@ namespace ContactForm.Controllers
             MailMessage mail = new MailMessage(email, "miskens@hotmail.com");
             mail.Subject = title;
             mail.IsBodyHtml = false;
-
-            message += Environment.NewLine + Environment.NewLine + "Mvh" +
-                Environment.NewLine + fullName +
-                Environment.NewLine + phoneNumber +
-                Environment.NewLine + companyName;
+            message = AppendMessage(fullName, phoneNumber, companyName, message);
 
             mail.Body = message;
 
@@ -63,10 +59,20 @@ namespace ContactForm.Controllers
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.EnableSsl = false;
             client.UseDefaultCredentials = false;
-            client.Credentials = new NetworkCredential("support", "supportPwd$");
-            client.Host = "host.mailserver.com";
+            client.Credentials = new NetworkCredential("support", "support$");
+            client.Host = "mgms.imagemediagate.com";
 
             return client;
+        }
+
+        public string AppendMessage(string fullName, string phoneNumber, string companyName, string message)
+        {
+            message += Environment.NewLine + Environment.NewLine + "Mvh" +
+            Environment.NewLine + fullName +
+            Environment.NewLine + phoneNumber +
+            Environment.NewLine + companyName;
+
+            return message;
         }
     }
 }
