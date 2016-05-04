@@ -1,0 +1,87 @@
+﻿@{
+    ViewBag.Title = "Mailing";
+}
+
+<script src="~/Scripts/angular.min.js"></script>
+<script src="~/Scripts/jquery-2.2.3.js"></script>
+
+<body ng-app="FormApp" ng-controller="FormController">
+    <div class="formWrapper">
+        <div id="contactFormDiv" ng-show="IsVisible">
+            @* TODO: Add Form *@
+            <form role="form" name="contactForm" class="form-horizontal">
+                <br /><br /><br /><br /><br />
+                <h2>Mickes Supportformulär - Skicka meddelande</h2><br /><br />
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label>Namn</label>
+                        <input class="form-control" type="text" name="name" ng-model="name" required="required" placeholder="Ditt namn" @*value="@fullName"*@ ng-class="{error: contactForm.name.$invalid}">
+                        <span class="help-block" ng-show="contactForm.name.$error.required"></span>
+                    </div>
+                    <div class="col-sm-3">
+                        <label>E-postadress</label>
+                        <input class="form-control" type="email" name="email" ng-model="email" required="required" placeholder="din email" @*value="@Model.UserName"*@ ng-class="{error: contactForm.email.$invalid}">
+                        <span class="help-block" ng-show="contactForm.email.$error.required"></span>
+                        <span class="help-block" ng-show="contactForm.email.$error.email">felaktig emailaddress</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label>Företag/Kontor</label>
+                        <input class="form-control" type="text" name="company" ng-model="company" required="required" placeholder="" @*value="@companyName"*@ hidden="hidden">
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Tel nr</label>
+                        <input class="form-control" type="text" name="telephone" ng-model="telephone" required="required" placeholder="tel nr som vi kan nå dig på" @*value="@phoneNumber"*@>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <label>Rubrik</label>
+                        <input class="form-control" type="text" name="title" ng-model="title" required="required" placeholder="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <label>Meddelande</label>
+                        <textarea class="form-control" rows="10" name="message" ng-model="message" required="required" placeholder="Ärendebeskrivning"></textarea>
+                        <span class="help-inline" ng-show="contactForm.message.$error.required"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <button id="sendBtn" class="btn btn-primary btn-lg btn-block" ng-click="send()" ng-disabled="contactForm.$invalid">Skicka</button>
+                    </div>
+                </div>
+            </form>
+
+            <br /><br />
+        </div>
+        <div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var app = angular.module('FormApp', [])
+        app.controller('FormController', function ($scope, $location, $http) {
+            $scope.IsVisible = true;
+            @* AngularJS Mailsender calling MVC Controller action to handle the variables sent. *@
+            $scope.send = function () {
+                var data = $.param({
+                    fullName: $scope.name, email: $scope.email, phoneNumber: $scope.telephone, companyName: $scope.company, title: $scope.title, message: $scope.message
+                });
+
+                var config = {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+                    }
+                }
+
+                $http.post('http://localhost:54522/Home/SendMail', data, config).success(function () { alert('Meddelandet har skickats') }).error(function () { alert('Lyckades inte skicka meddelandet.') });
+                $scope.IsVisible = $scope.IsVisible ? false : true;
+                $scope.ShowUp = $scope.ShowUp ? false : true;
+                $scope.ShowDown = $scope.ShowDown ? false : true;
+            };
+        });
+    </script>
+</body>
